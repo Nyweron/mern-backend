@@ -13,13 +13,17 @@ router.post(
   "/",
   [
     check("title").notEmpty(),
-    check("descrition").isLength({ min: 5 }),
+    check("description").isLength({ min: 5 }),
     check("address").notEmpty(),
   ],
   placesControllers.createPlace
 );
 
-router.patch("/:pid", placesControllers.updatePlaceById);
+router.patch(
+  "/:pid",
+  [check("title").notEmpty(), check("description").isLength({ min: 5 })],
+  placesControllers.updatePlaceById
+);
 
 router.delete("/:pid", placesControllers.deletePlace);
 
