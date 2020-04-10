@@ -47,7 +47,7 @@ const getPlacesByUserId = async (req, res, next) => {
   let places;
 
   try {
-    places = await Place.find({creator: userId});
+    places = await Place.find({ creator: userId });
   } catch (err) {
     return next(
       new HttpError("Fetching places failed, please try again later.", 500)
@@ -60,7 +60,9 @@ const getPlacesByUserId = async (req, res, next) => {
     );
   }
 
-  res.json({ places: places.map(place=>place.toObject({getters:true})) });
+  res.json({
+    places: places.map((place) => place.toObject({ getters: true })),
+  });
 };
 
 const createPlace = async (req, res, next) => {
@@ -99,7 +101,7 @@ const createPlace = async (req, res, next) => {
   res.status(201).json({ place: createdPlace });
 };
 
-const updatePlaceById = (req, res, next) => {
+const updatePlaceById = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     throw new HttpError("Invalid inputs passed, please check your data.", 422);
@@ -108,15 +110,27 @@ const updatePlaceById = (req, res, next) => {
   const { title, description } = req.body;
   const placeId = req.params.pid;
 
-  const updatedPlace = { ...dummyPlaces.find((p) => p.id === placeId) };
-  const placeIndex = dummyPlaces.findIndex((p) => p.id === placeId);
+  let place;
+  try {
+    place = await Place.findById(placeId);
+  } catch (err) {
+    return next(
+      new HttpError("Something went wrong, could not update place.", 500)
+    );
+  }
 
-  updatedPlace.title = title;
-  updatedPlace.description = description;
+  place.title = title;
+  place.description = description;
 
-  dummyPlaces[placeIndex] = updatedPlace;
+  try {
+    await place.save();
+  } catch (err) {
+    return next(
+      new HttpError("Something went wrong, could not update place.", 500)
+    );
+  }
 
-  res.status(200).json({ place: updatedPlace });
+  res.status(200).json({ place: place.toObject({ getters: true }) });
 };
 
 const deletePlace = (req, res, next) => {
