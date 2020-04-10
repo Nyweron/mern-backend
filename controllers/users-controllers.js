@@ -13,8 +13,18 @@ const dummyUsers = [
   },
 ];
 
-const getUsers = (req, res, next) => {
-  res.json({ users: dummyUsers });
+const getUsers = async (req, res, next) => {
+  let users;
+  try {
+    /* "-password" - mongoose find all users with all properties without password */
+    users = await User.find({}, "-password");
+  } catch (err) {
+    return next(
+      new HttpError("Fetching users failed, please try again later.", 500)
+    );
+  }
+
+  res.json({ users: users.map((user) => user.toObject({ getters: true })) });
 };
 
 const signup = async (req, res, next) => {
