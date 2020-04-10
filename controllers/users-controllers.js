@@ -2,6 +2,7 @@ const uuid = require("uuid/v4");
 const { validationResult } = require("express-validator");
 
 const HttpError = require("../models/http-error");
+const User = require("../models/user");
 
 const dummyUsers = [
   {
@@ -16,33 +17,46 @@ const getUsers = (req, res, next) => {
   res.json({ users: dummyUsers });
 };
 
-const signup = (req, res, next) => {
+const signup = async (req, res, next) => {
   const errors = validationResult(req);
-  if(!errors.isEmpty()){
-    throw new HttpError('Invalid inputs passed, please check your data.', 422)
+  if (!errors.isEmpty()) {
+    throw new HttpError("Invalid inputs passed, please check your data.", 422);
   }
+console.log(req.body)
+  const { name, email, password, places } = req.body;
 
-  const { name, email, password } = req.body;
-
-  const hasUser = dummyUsers.find((u) => u.email === email);
-
-  if (hasUser) {
-    throw new HttpError(
-      "Could not create user, email already exists.",
-      422
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ email: email });
+  } catch (err) {
+    return next(
+      new HttpError("Signing up failed, please try again later.", 500)
     );
   }
 
-  const createdUser = {
-    id: uuid(),
+  if (existingUser) {
+    return next(
+      new HttpError("User exist already, please login instead.", 422)
+    );
+  }
+
+  const createdUser = new User({
     name,
     email,
+    image:
+      "https://upload.wikimedia.org/wikipedia/commons/c/c7/Empire_State_Building_from_the_Top_of_the_Rock.jpg",
     password,
-  };
+    places
+  });
 
-  dummyUsers.push(createdUser);
+  try {
+    await createdUser.save();
+  } catch (err) {
+    const error = new HttpError("Signing up failed, please try again", 500);
+    return next(error);
+  }
 
-  res.status(201).json({ user: createdUser });
+  res.status(201).json({ user: createdUser.toObject({ getter: true }) });
 };
 
 const login = (req, res, next) => {
