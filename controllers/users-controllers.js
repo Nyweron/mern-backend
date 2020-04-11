@@ -1,17 +1,7 @@
-const uuid = require("uuid/v4");
 const { validationResult } = require("express-validator");
 
 const HttpError = require("../models/http-error");
 const User = require("../models/user");
-
-const dummyUsers = [
-  {
-    id: "u1",
-    name: "Tom Jerry",
-    email: "test@test.com",
-    password: "123456",
-  },
-];
 
 const getUsers = async (req, res, next) => {
   let users;
@@ -58,7 +48,7 @@ const signup = async (req, res, next) => {
     image:
       "https://upload.wikimedia.org/wikipedia/commons/c/c7/Empire_State_Building_from_the_Top_of_the_Rock.jpg",
     password,
-    places:[]
+    places: [],
   });
 
   try {
