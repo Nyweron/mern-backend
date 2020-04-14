@@ -37,6 +37,12 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || "An unknown error occurred!" });
 });
 
+/*
+  https://www.mongodb.com/cloud/atlas
+  https://mongoosejs.com/docs/connections.html
+  in connection add your mongo connection from atlas or localhost :)
+*/
+
 mongoose
   .connect(
     "mongodb+srv://nyweron:s9DIkWZYjOrKvhuC@cluster0-mkwnp.mongodb.net/mern?retryWrites=true&w=majority",
