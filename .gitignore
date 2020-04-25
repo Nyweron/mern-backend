@@ -742,3 +742,6 @@ healthchecksdb
 MigrationBackup/
 
 # End of https://www.gitignore.io/api/node,react,reactnative,visualstudio,visualstudiocode
+
+
+uploads/images/
