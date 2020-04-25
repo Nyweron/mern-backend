@@ -8,6 +8,12 @@ const HttpError = require("./models/http-error");
 
 const app = express();
 
+require('dotenv').config()
+const host = process.env.HOST;
+const username = process.env.USER;
+const database = process.env.DATABASE;
+const password = process.env.PASS;
+
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
@@ -45,7 +51,7 @@ app.use((error, req, res, next) => {
 
 mongoose
   .connect(
-    "mongodb+srv://nyweron:s9DIkWZYjOrKvhuC@cluster0-mkwnp.mongodb.net/mern?retryWrites=true&w=majority",
+    `mongodb+srv://${username}:${password}@${host}/${database}?retryWrites=true&w=majority`,
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => {
