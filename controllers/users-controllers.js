@@ -47,11 +47,7 @@ const signup = async (req, res, next) => {
   try {
     hashedPassword = await bcrypt.hash(password, 12);
   } catch (err) {
-    const error = new HttpError(
-      "Could not create user, please try again.",
-      500
-    );
-    return next(error);
+    return next(new HttpError("Could not create user, please try again.", 500));
   }
 
   const createdUser = new User({
@@ -65,8 +61,7 @@ const signup = async (req, res, next) => {
   try {
     await createdUser.save();
   } catch (err) {
-    const error = new HttpError("Signing up failed, please try again", 500);
-    return next(error);
+    return next(new HttpError("Signing up failed, please try again", 500));
   }
 
   res.status(201).json({ user: createdUser.toObject({ getter: true }) });
@@ -85,7 +80,25 @@ const login = async (req, res, next) => {
     );
   }
 
-  if (!existingUser || existingUser.password !== password) {
+  if (!existingUser) {
+    return next(
+      new HttpError("Invalid credentials, could not log you in", 401)
+    );
+  }
+
+  let isValidPassword = false;
+  try {
+    isValidPassword = await bcrypt.compare(password, existingUser.password);
+  } catch (err) {
+    return next(
+      new HttpError(
+        "Could not log you in, please check your credentials and try again",
+        500
+      )
+    );
+  }
+
+  if (!isValidPassword) {
     return next(
       new HttpError("Invalid credentials, could not log you in", 401)
     );
