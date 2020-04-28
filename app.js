@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -11,7 +11,7 @@ const HttpError = require("./models/http-error");
 
 const app = express();
 
-require('dotenv').config()
+require("dotenv").config();
 const host = process.env.HOST;
 const username = process.env.DB_USER;
 const database = process.env.DB_NAME;
@@ -19,7 +19,7 @@ const password = process.env.DB_PASS;
 
 app.use(bodyParser.json());
 
-app.use('/uploads/images', express.static(path.join('uploads', 'images')));
+app.use("/uploads/images", express.static(path.join("uploads", "images")));
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -27,7 +27,7 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
   next();
 });
 
@@ -40,9 +40,9 @@ app.use((req, res, next) => {
 });
 
 app.use((error, req, res, next) => {
-  if(req.file){
+  if (req.file) {
     fs.unlink(req.file.path, (err) => {
-      console.log(err)
+      console.log(err);
     });
   }
 
@@ -60,11 +60,12 @@ app.use((error, req, res, next) => {
   in connection add your mongo connection from atlas or localhost :)
 */
 
+const url =
+  process.env.MONGODB ||
+  `mongodb+srv://${username}:${password}@${host}/${database}?retryWrites=true&w=majority`;
+
 mongoose
-  .connect(
-    `mongodb+srv://${username}:${password}@${host}/${database}?retryWrites=true&w=majority`,
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  )
+  .connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     app.listen(process.env.PORT || 5000);
   })
