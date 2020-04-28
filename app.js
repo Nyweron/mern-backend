@@ -60,10 +60,8 @@ app.use((error, req, res, next) => {
   in connection add your mongo connection from atlas or localhost :)
 */
 
-console.log("process.env.MONGODB:",process.env.MONGODB)
-
 const url =
-  process.env.MONGODB ||
+  process.env.MONGODB_URI ||
   `mongodb+srv://${username}:${password}@${host}/${database}?retryWrites=true&w=majority`;
 
 mongoose
