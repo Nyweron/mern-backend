@@ -6,7 +6,7 @@ const HttpError = require("../models/http-error");
 const User = require("../models/user");
 
 require("dotenv").config();
-const secretToken = process.env.TOKEN;
+const secretToken = process.env.JWT_KEY;
 
 const getUsers = async (req, res, next) => {
   let users;

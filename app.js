@@ -13,9 +13,9 @@ const app = express();
 
 require('dotenv').config()
 const host = process.env.HOST;
-const username = process.env.USER;
-const database = process.env.DATABASE;
-const password = process.env.PASS;
+const username = process.env.DB_USER;
+const database = process.env.DB_NAME;
+const password = process.env.DB_PASS;
 
 app.use(bodyParser.json());
 

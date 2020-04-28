@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const HttpError = require("../models/http-error");
 
 require("dotenv").config();
-const secretToken = process.env.TOKEN;
+const secretToken = process.env.JWT_KEY;
 
 module.exports = (req, res, next) => {
   if(req.method === 'OPTIONS') {
