@@ -29,7 +29,7 @@ const signup = async (req, res, next) => {
       new HttpError("Invalid inputs passed, please check your data.", 422)
     );
   }
-
+console.log('1');
   const { name, email, password } = req.body;
 
   let existingUser;
@@ -40,7 +40,7 @@ const signup = async (req, res, next) => {
       new HttpError("Signing up failed, please try again later.", 500)
     );
   }
-
+  console.log('2');
   if (existingUser) {
     return next(
       new HttpError("User exist already, please login instead.", 422)
@@ -61,13 +61,13 @@ const signup = async (req, res, next) => {
     password: hashedPassword,
     places: [],
   });
-
+  console.log('3');
   try {
     await createdUser.save();
   } catch (err) {
     return next(new HttpError("Signing up failed, please try again", 500));
   }
-
+  console.log('4');
   let token;
   try {
     token = jwt.sign(
@@ -78,7 +78,7 @@ const signup = async (req, res, next) => {
   } catch (err) {
     return next(new HttpError("Signing up failed, please try again", 500));
   }
-
+  console.log('5');
   res
     .status(201)
     .json({ userId: createdUser.id, email: createdUser.email, token: token });
